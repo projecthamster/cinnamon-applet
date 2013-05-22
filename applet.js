@@ -18,28 +18,28 @@
 //        otherwise even most primitive operations are hardcore
 
 const Clutter = imports.gi.Clutter;
-const Config = imports.misc.config;
 const DBus = imports.dbus;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 const St = imports.gi.St;
-const Shell = imports.gi.Shell;
 const Meta = imports.gi.Meta;
 const Main = imports.ui.main;
 const Gio = imports.gi.Gio;
 const PopupMenu = imports.ui.popupMenu;
 const PanelMenu = imports.ui.panelMenu;
-const Util = imports.misc.util;
 const Gettext = imports.gettext.domain('hamster-shell-extension');
 const _ = Gettext.gettext;
 const N_ = function(x) { return x; }
 
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
-const Stuff = Me.imports.stuff;
+// Get current directory on imports search path
+// TODO - There must be an easier way to do this in Cinnamon...
+let file_info = getCurrentFile();
+const LIB_PATH = file_info[1];
+imports.searchPath.unshift(LIB_PATH);
 
+const Convenience = imports.convenience;
+const Stuff = imports.stuff;
 
 // TODO - why are we not using dbus introspection here or something?
 let ApiProxy = DBus.makeProxyClass({
@@ -541,4 +541,28 @@ function ExtensionController(extensionMeta) {
 function init(extensionMeta) {
     Convenience.initTranslations("hamster-shell-extension");
     return new ExtensionController(extensionMeta);
+}
+
+function getCurrentFile() {
+    let stack = (new Error()).stack;
+
+    // Assuming we're importing this directly from an extension (and we shouldn't
+    // ever not be), its UUID should be directly in the path here.
+    let stackLine = stack.split('\n')[1];
+    if (!stackLine)
+        throw new Error('Could not find current file');
+
+    // The stack line is like:
+    //   init([object Object])@/home/user/data/gnome-shell/extensions/u@u.id/prefs.js:8
+    //
+    // In the case that we're importing from
+    // module scope, the first field is blank:
+    //   @/home/user/data/gnome-shell/extensions/u@u.id/prefs.js:8
+    let match = new RegExp('@(.+):\\d+').exec(stackLine);
+    if (!match)
+        throw new Error('Could not find current file');
+
+    let path = match[1];
+    let file = Gio.File.new_for_path(path);
+    return [file.get_path(), file.get_parent().get_path(), file.get_basename()];
 }
