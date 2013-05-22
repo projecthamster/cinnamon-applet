@@ -207,7 +207,6 @@ HamsterApplet.prototype = {
     _init: function(metadata, orientation, panel_height) {
         Applet.TextIconApplet.prototype._init.call(this, orientation, panel_height);
 
-        this.extensionMeta = extensionMeta;
         this._proxy = new ApiProxy(DBus.session, 'org.gnome.Hamster', '/org/gnome/Hamster');
         this._proxy.connect('FactsChanged',      Lang.bind(this, this.refresh));
         this._proxy.connect('ActivitiesChanged', Lang.bind(this, this.refreshActivities));
@@ -220,31 +219,29 @@ HamsterApplet.prototype = {
 
         this._settings = Convenience.getSettings();
 
+        // TODO: Remove panelContainer, panelLabel, this.icon when ported to applet APIs
 
-        this.panelContainer = new St.BoxLayout();
-        this.actor.add_actor(this.panelContainer);
+        // Set initial label, icon, activity
+        this._label = _("Loading...");
+        this.set_applet_label(this._label);
 
+        Gtk.IconTheme.get_default().append_search_path(metadata.path + "/images/");
+        this._trackingIcon = "hamster-tracking";
+        this._idleIcon = "hamster-idle";
+        this.set_applet_icon_symbolic_name("hamster-tracking");
 
-        this.panelLabel = new St.Label({style_class: 'hamster-label', text: _("Loading...")});
         this.currentActivity = null;
 
-        // panel icon
-        this._trackingIcon = Gio.icon_new_for_string(metadata.path + "/images/hamster-tracking-symbolic.svg");
-        this._idleIcon = Gio.icon_new_for_string(metadata.path + "/images/hamster-idle-symbolic.svg");
+        // Create applet menu
+        this.menuManager = new PopupMenu.PopupMenuManager(this);
+        this.menu = new Applet.AppletPopupMenu(this, orientation);
+        this.menuManager.addMenu(this.menu);
 
-        this.icon = new St.Icon({gicon: this._trackingIcon,
-                                  icon_size: 16,
-                                  style_class: "panel-icon"});
-
-        this.panelContainer.add(this.icon);
-        this.panelContainer.add(this.panelLabel);
-
+        // Add HamsterBox to menu
         let item = new HamsterBox()
         item.connect('activate', Lang.bind(this, this._onActivityEntry));
         this.activityEntry = item;
         this.activityEntry.proxy = this._proxy; // lazy proxying
-
-
         this.menu.addMenuItem(item);
 
         // overview
@@ -268,8 +265,7 @@ HamsterApplet.prototype = {
         item.connect('activate', Lang.bind(this, this._onShowSettingsActivate));
         this.menu.addMenuItem(item);
 
-
-        // focus menu upon display
+        // Focus HamsterBox when menu is opened
         this.menu.connect('open-state-changed', Lang.bind(this,
             function(menu, open) {
                 if (open) {
@@ -288,11 +284,7 @@ HamsterApplet.prototype = {
         this.refresh();
     },
 
-    show: function() {
-        this.menu.open();
-    },
-
-    toggle: function() {
+    on_applet_clicked: function(event) {
         this.menu.toggle();
     },
 
@@ -418,31 +410,31 @@ HamsterApplet.prototype = {
 
 
         if (appearance == 0) {
-            this.panelLabel.show();
-            this.icon.hide()
+            this.set_applet_icon_symbolic_name("none");
 
             if (fact && !fact.endTime) {
-                this.panelLabel.text = "%s %s".format(fact.name, Stuff.formatDuration(fact.delta));
+                this._label = "%s %s".format(fact.name, Stuff.formatDuration(fact.delta));
             } else {
-                this.panelLabel.text = _("No activity");
+                this._label = _("No activity");
             }
+            this.set_applet_label(this._label);
         } else {
-            this.icon.show();
-            if (appearance == 1)
-                this.panelLabel.hide();
-            else
-                this.panelLabel.show();
-
-
             // updates panel label. if fact is none, will set panel status to "no activity"
             if (fact && !fact.endTime) {
-                this.panelLabel.text = Stuff.formatDuration(fact.delta);
-                this.icon.gicon = this._trackingIcon;
+                this._label = Stuff.formatDuration(fact.delta);
+                this.set_applet_icon_symbolic_name("hamster-tracking");
             } else {
-                this.panelLabel.text = "";
-                this.icon.gicon = this._idleIcon;
+                this._label = "";
+                this.set_applet_icon_symbolic_name("hamster-idle");
             }
+
+            if (appearance == 1)
+                this.set_applet_label("");
+            else
+                this.set_applet_label(this._label);
         }
+        // Always set the tooltip
+        this.set_applet_tooltip(this._label);
     },
 
 
