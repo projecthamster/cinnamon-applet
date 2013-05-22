@@ -17,6 +17,7 @@
 // TODO - investigate usage of third party libs (d3/underscore/whatever)
 //        otherwise even most primitive operations are hardcore
 
+const Applet = imports.ui.applet;
 const Clutter = imports.gi.Clutter;
 const DBus = imports.dbus;
 const GLib = imports.gi.GLib;
@@ -196,17 +197,15 @@ HamsterBox.prototype = {
 };
 
 
-
-/* Panel button */
-function HamsterExtension(extensionMeta) {
-    this._init(extensionMeta);
+function HamsterApplet(metadata, orientation, panel_height) {
+    this._init(metadata, orientation, panel_height);
 }
 
-HamsterExtension.prototype = {
-    __proto__: PanelMenu.Button.prototype,
+HamsterApplet.prototype = {
+    __proto__: Applet.TextIconApplet.prototype,
 
-    _init: function(extensionMeta) {
-        PanelMenu.Button.prototype._init.call(this, 0.0);
+    _init: function(metadata, orientation, panel_height) {
+        Applet.TextIconApplet.prototype._init.call(this, orientation, panel_height);
 
         this.extensionMeta = extensionMeta;
         this._proxy = new ApiProxy(DBus.session, 'org.gnome.Hamster', '/org/gnome/Hamster');
@@ -230,8 +229,8 @@ HamsterExtension.prototype = {
         this.currentActivity = null;
 
         // panel icon
-        this._trackingIcon = Gio.icon_new_for_string(this.extensionMeta.path + "/images/hamster-tracking-symbolic.svg");
-        this._idleIcon = Gio.icon_new_for_string(this.extensionMeta.path + "/images/hamster-idle-symbolic.svg");
+        this._trackingIcon = Gio.icon_new_for_string(metadata.path + "/images/hamster-tracking-symbolic.svg");
+        this._idleIcon = Gio.icon_new_for_string(metadata.path + "/images/hamster-idle-symbolic.svg");
 
         this.icon = new St.Icon({gicon: this._trackingIcon,
                                   icon_size: 16,
@@ -486,61 +485,9 @@ HamsterExtension.prototype = {
     }
 };
 
-
-function ExtensionController(extensionMeta) {
-    let dateMenu = Main.panel.statusArea.dateMenu;
-
-    return {
-        extensionMeta: extensionMeta,
-        extension: null,
-        settings: null,
-
-        enable: function() {
-            this.settings = Convenience.getSettings();
-            this.extension = new HamsterExtension(this.extensionMeta);
-
-            if (this.settings.get_boolean("swap-with-calendar")) {
-                Main.panel.addToStatusArea("hamster", this.extension, 0, "center");
-
-                Main.panel._centerBox.remove_actor(dateMenu.container);
-                Main.panel._addToPanelBox('dateMenu', dateMenu, -1, Main.panel._rightBox);
-            } else {
-                Main.panel.addToStatusArea("hamster", this.extension, 0, "right");
-            }
-
-            Main.panel.menuManager.addMenu(this.extension.menu);
-
-
-            global.display.add_keybinding("show-hamster-dropdown",
-                this.extension._settings,
-                Meta.KeyBindingFlags.NONE,
-                Lang.bind(this.extension, this.extension.toggle)
-            );
-        },
-
-        disable: function() {
-            global.display.remove_keybinding("show-hamster-dropdown");
-
-
-            if (this.settings.get_boolean("swap-with-calendar")) {
-                Main.panel._rightBox.remove_actor(dateMenu.container);
-                Main.panel._addToPanelBox('dateMenu', dateMenu, Main.sessionMode.panel.center.indexOf('dateMenu'), Main.panel._centerBox);
-            }
-
-            Main.panel.menuManager.removeMenu(this.extension.menu);
-
-            GLib.source_remove(this.extension.timeout);
-            this.extension.actor.destroy();
-            this.extension.destroy();
-            this.extension = null;
-        }
-    }
-}
-
-
-function init(extensionMeta) {
-    Convenience.initTranslations("hamster-shell-extension");
-    return new ExtensionController(extensionMeta);
+function main(metadata, orientation, panel_height) {
+    Convenience.initTranslations("hamster-cinnamon-applet");
+    return new HamsterApplet(metadata, orientation, panel_height);
 }
 
 function getCurrentFile() {

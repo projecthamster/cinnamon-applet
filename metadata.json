@@ -5,7 +5,7 @@
     "original-authors": [
         "toms.baugis@gmail.com",
         "jerome@oufella.com",
-	"jonbrett.dev@gmail.com"
+        "jonbrett.dev@gmail.com"
     ],
     "settings-schema": "org.gnome.shell.extensions.project-hamster",
     "url": "https://github.com/projecthamster/shell-extension.git",
