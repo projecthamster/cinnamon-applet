@@ -1,5 +1,8 @@
 /*
- * Simple Hamster extension for gnome-shell
+ * Simple Hamster applet for Cinnamon
+ * Copyright (c) 2013 Jon Brett <jonbrett.dev@gmail.com>
+ *
+ * Based on the Hamster Gnome shell extension
  * Copyright (c) 2011 Jerome Oufella <jerome@oufella.com>
  * Copyright (c) 2011-2012 Toms Baugis <toms.baugis@gmail.com>
  * Icons Artwork Copyright (c) 2012 Reda Lazri <the.red.shortcut@gmail.com>

@@ -1,7 +1,7 @@
 {
-    "description": "Cinnamon applet for project hamster - the GNOME time tracker
+    "description": "Cinnamon applet for project hamster - the GNOME time tracker",
     "extension-id": "project-hamster",
-    "name": "Project Hamster Extension",
+    "name": "Project Hamster Applet",
     "original-authors": [
         "toms.baugis@gmail.com",
         "jerome@oufella.com",
@@ -10,5 +10,5 @@
     "settings-schema": "org.gnome.shell.extensions.project-hamster",
     "url": "https://github.com/projecthamster/shell-extension.git",
     "uuid": "hamster@projecthamster.wordpress.com",
-    "version": 1.0
+    "version": 0.1
 }
