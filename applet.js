@@ -39,7 +39,6 @@ let file_info = getCurrentFile();
 const LIB_PATH = file_info[1];
 imports.searchPath.unshift(LIB_PATH);
 
-const Convenience = imports.convenience;
 const Stuff = imports.stuff;
 
 // TODO - why are we not using dbus introspection here or something?
@@ -217,7 +216,9 @@ HamsterApplet.prototype = {
                                               "org.gnome.Hamster.WindowServer",
                                               "/org/gnome/Hamster/WindowServer")
 
-        this._settings = Convenience.getSettings();
+        // TODO: Get settings using Cinnamon applet apis
+        //this._settings = new Gio.Settings({schema: 'org.gnome.hamster.cinnamon-applet'});
+        //this._settings.set_int("panel-appearance", 1);
 
         // TODO: Remove panelContainer, panelLabel, this.icon when ported to applet APIs
 
@@ -406,7 +407,9 @@ HamsterApplet.prototype = {
 
     updatePanelDisplay: function(fact) {
         // 0 = show label, 1 = show icon + duration, 2 = just icon
-        let appearance = this._settings.get_int("panel-appearance");
+        // TODO - Get settings using Cinnamon settings API
+        //let appearance = this._settings.get_int("panel-appearance");
+        let appearance=1;
 
 
         if (appearance == 0) {
@@ -478,7 +481,8 @@ HamsterApplet.prototype = {
 };
 
 function main(metadata, orientation, panel_height) {
-    Convenience.initTranslations("hamster-cinnamon-applet");
+    //TODO: Initialise translations in a cinnamon way ;-)
+    //Convenience.initTranslations("hamster-cinnamon-applet");
     return new HamsterApplet(metadata, orientation, panel_height);
 }
 
