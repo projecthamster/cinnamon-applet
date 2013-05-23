@@ -411,33 +411,25 @@ HamsterApplet.prototype = {
         //let appearance = this._settings.get_int("panel-appearance");
         let appearance=1;
 
+        if (fact && !fact.endTime) {
+            this._label = Stuff.formatDuration(fact.delta);
+            this.set_applet_icon_symbolic_name("hamster-tracking");
+            this.set_applet_tooltip("%s %s".format(fact.name, Stuff.formatDuration(fact.delta)));
+        } else {
+            this._label = "--:--"
+            this.set_applet_icon_symbolic_name("hamster-idle");
+            this.set_applet_tooltip(_("No Activity"));
+        }
+
 
         if (appearance == 0) {
             this.set_applet_icon_symbolic_name("none");
-
-            if (fact && !fact.endTime) {
-                this._label = "%s %s".format(fact.name, Stuff.formatDuration(fact.delta));
-            } else {
-                this._label = _("No activity");
-            }
+            this.set_applet_label(this._label);
+        } else if (appearance == 1) {
             this.set_applet_label(this._label);
         } else {
-            // updates panel label. if fact is none, will set panel status to "no activity"
-            if (fact && !fact.endTime) {
-                this._label = Stuff.formatDuration(fact.delta);
-                this.set_applet_icon_symbolic_name("hamster-tracking");
-            } else {
-                this._label = "";
-                this.set_applet_icon_symbolic_name("hamster-idle");
-            }
-
-            if (appearance == 1)
-                this.set_applet_label("");
-            else
-                this.set_applet_label(this._label);
+            this.set_applet_label("");
         }
-        // Always set the tooltip
-        this.set_applet_tooltip(this._label);
     },
 
 
