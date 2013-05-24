@@ -40,6 +40,9 @@ const LIB_PATH = file_info[1];
 imports.searchPath.unshift(LIB_PATH);
 
 const Stuff = imports.stuff;
+const Convenience = imports.convenience;
+
+const HAMSTER_APPLET_SCHEMA = "org.cinnamon.hamster-applet";
 
 // TODO - why are we not using dbus introspection here or something?
 let ApiProxy = DBus.makeProxyClass({
@@ -216,11 +219,8 @@ HamsterApplet.prototype = {
                                               "org.gnome.Hamster.WindowServer",
                                               "/org/gnome/Hamster/WindowServer")
 
-        // TODO: Get settings using Cinnamon applet apis
-        //this._settings = new Gio.Settings({schema: 'org.gnome.hamster.cinnamon-applet'});
-        //this._settings.set_int("panel-appearance", 1);
-
-        // TODO: Remove panelContainer, panelLabel, this.icon when ported to applet APIs
+        this._settings = Convenience.getAppletSettings(HAMSTER_APPLET_SCHEMA,
+                metadata.path + "/schemas/");
 
         // Set initial label, icon, activity
         this._label = _("Loading...");
@@ -407,9 +407,7 @@ HamsterApplet.prototype = {
 
     updatePanelDisplay: function(fact) {
         // 0 = show label, 1 = show icon + duration, 2 = just icon
-        // TODO - Get settings using Cinnamon settings API
-        //let appearance = this._settings.get_int("panel-appearance");
-        let appearance=1;
+        let appearance = this._settings.get_int("panel-appearance");
 
         if (fact && !fact.endTime) {
             this._label = Stuff.formatDuration(fact.delta);
@@ -420,7 +418,6 @@ HamsterApplet.prototype = {
             this.set_applet_icon_symbolic_name("hamster-idle");
             this.set_applet_tooltip(_("No Activity"));
         }
-
 
         if (appearance == 0) {
             this.set_applet_icon_symbolic_name("none");
