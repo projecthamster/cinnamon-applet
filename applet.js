@@ -409,24 +409,29 @@ HamsterApplet.prototype = {
         // 0 = show label, 1 = show icon + duration, 2 = just icon
         let appearance = this._settings.get_int("panel-appearance");
 
+        /* Format label strings and icon */
         if (fact && !fact.endTime) {
-            this._label = Stuff.formatDuration(fact.delta);
-            this.set_applet_icon_symbolic_name("hamster-tracking");
-            this.set_applet_tooltip("%s %s".format(fact.name, Stuff.formatDuration(fact.delta)));
+            this._label_short = Stuff.formatDuration(fact.delta);
+            this._label_long = this._label_short + " " + fact.name;
+            this._icon_name = "hamster-tracking";
         } else {
-            this._label = "--:--"
-            this.set_applet_icon_symbolic_name("hamster-idle");
-            this.set_applet_tooltip(_("No Activity"));
+            this._label_short = _("No Activity");
+            this._label_long = this._label_short;
+            this._icon_name = "hamster-idle";
         }
 
+        /* Configure based on appearance setting */
         if (appearance == 0) {
             this.set_applet_icon_symbolic_name("none");
-            this.set_applet_label(this._label);
+            this.set_applet_label(this._label_long);
         } else if (appearance == 1) {
-            this.set_applet_label(this._label);
+            this.set_applet_icon_symbolic_name(this._icon_name);
+            this.set_applet_label(this._label_short);
         } else {
+            this.set_applet_icon_symbolic_name(this._icon_name);
             this.set_applet_label("");
         }
+        this.set_applet_tooltip(this._label_long);
     },
 
 
