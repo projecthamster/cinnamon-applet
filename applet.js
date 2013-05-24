@@ -277,6 +277,15 @@ HamsterApplet.prototype = {
             }
         ));
 
+        // Add global hotkey (works in Cinnamon >= 1.8)
+        this.hotkey = "" + this._settings.get_strv("show-hamster-dropdown");
+        try {
+            Main.keybindingManager.addHotKey("show-hamster-menu",
+                    this.hotkey,
+                    Lang.bind(this, this.on_hotkey_triggered));
+        } catch (e) {
+            global.logError(e);
+        }
 
         // load data
         this.facts = null;
@@ -286,6 +295,10 @@ HamsterApplet.prototype = {
     },
 
     on_applet_clicked: function(event) {
+        this.menu.toggle();
+    },
+
+    on_hotkey_triggered: function() {
         this.menu.toggle();
     },
 
