@@ -1,30 +1,16 @@
-Simplistic and very much work in progress gnome shell extension for hamster.
-
-h1. Available on extensions site
-
-*The extension is now up in extensions.gnome.org:*
-"https://extensions.gnome.org/extension/425/project-hamster-extension/":https://extensions.gnome.org/extension/425/project-hamster-extension/
-
-The extensions page will work for gnome-shell versions starting from 3.4.
-If you are stuck with an older gnome shell version, you can
-"grab an older version from the tags":https://github.com/projecthamster/shell-extension/tags
-
-Install from sources for testing or development purposes.
-
+Work in progress Cinnamon applet for hamster.
 
 h1. Installing
 
-To install just symlink checkout folder into @~/.local/share/gnome-shell/extensions/@
+To install just symlink checkout folder into @~/.local/share/cinnamon/applets/@
 as hamster@projecthamster.wordpress.com.
 It looks something like this:
 
-pre. cd ~/.local/share/gnome-shell/extensions/
+pre. cd ~/.local/share/cinnamon/applets/
 ln -s /path/to/the/checkout hamster@projecthamster.wordpress.com
 
-After that you can head to the extensions page to enable it and edit prefs at
-https://extensions.gnome.org/local/
+h1. Known issues
 
-
-h1. Known issues:
-
-* it's still very minimal
+* Still very much a fork of the gnome shell extension - so not fully "Cinnamon-ized" yet
+* Settings currently hard-coded (work in progress)
+* Translations/Locales currently not working
