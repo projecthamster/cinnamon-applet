@@ -1,12 +1,16 @@
+#!/usr/bin/gjs
 const Gdk = imports.gi.Gdk;
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
 const GObject = imports.gi.GObject;
 const Lang = imports.lang;
 
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+let file_info = getCurrentFile();
+const LIB_PATH = file_info[1];
+imports.searchPath.unshift(LIB_PATH);
+const Convenience = imports.convenience;
+
+const HAMSTER_APPLET_SCHEMA = "org.cinnamon.hamster-applet";
 
 const HamsterSettingsWidget = new GObject.Class({
     Name: 'ProjectHamster.Prefs.HamsterSettingsWidget',
@@ -17,26 +21,15 @@ const HamsterSettingsWidget = new GObject.Class({
         this.parent(params);
         this.margin = 10;
 
-        this._settings = Convenience.getSettings();
+        this._settings = Convenience.getAppletSettings(HAMSTER_APPLET_SCHEMA,
+                file_info[1] + "/schemas/");
 
         let vbox, label;
-
 
         label = new Gtk.Label();
         label.set_markup("<b>Positioning</b>")
         label.set_alignment(0, 0.5)
         this.add(label);
-
-        vbox = new Gtk.VBox({margin: 10});
-        this.add(vbox);
-        let checkbox = new Gtk.CheckButton({label: "Swap clock with the hamster button",
-                                            margin_bottom: 10,
-                                            margin_top: 5})
-        checkbox.set_alignment(0, 0.5)
-        vbox.add(checkbox)
-        checkbox.connect('toggled', Lang.bind(this, this._onPositionChange));
-        checkbox.set_active(this._settings.get_boolean("swap-with-calendar"));
-
 
         label = new Gtk.Label({margin_top: 20});
         label.set_markup("<b>Appearance in panel</b>")
@@ -49,9 +42,9 @@ const HamsterSettingsWidget = new GObject.Class({
         let appearanceOptions = new Gtk.ListStore();
         appearanceOptions.set_column_types([GObject.TYPE_STRING, GObject.TYPE_INT]);
 
-        appearanceOptions.set(appearanceOptions.append(), [0, 1], ["Label", 0]);
-        appearanceOptions.set(appearanceOptions.append(), [0, 1], ["Icon", 1]);
-        appearanceOptions.set(appearanceOptions.append(), [0, 1], ["Label and icon", 2]);
+        appearanceOptions.set(appearanceOptions.append(), [0, 1], ["Just Label", 0]);
+        appearanceOptions.set(appearanceOptions.append(), [0, 1], ["Icon and duration", 1]);
+        appearanceOptions.set(appearanceOptions.append(), [0, 1], ["Just icon", 2]);
 
         let appearanceCombo = new Gtk.ComboBox({model: appearanceOptions});
 
@@ -78,17 +71,10 @@ const HamsterSettingsWidget = new GObject.Class({
         vbox.add(entry)
         entry.connect('changed', Lang.bind(this, this._onHotkeyChange));
 
-        vbox.add(new Gtk.Label({label: "Reload gnome shell after updating prefs (alt+f2 > r)",
+        vbox.add(new Gtk.Label({label: "Reload cinnamon after updating prefs (alt+f2 > r)",
                                 margin_top: 70}));
     },
 
-    _onPositionChange: function(widget) {
-        let newVal = widget.get_active();
-        if (this._settings.get_boolean("swap-with-calendar") == newVal)
-            return;
-
-        this._settings.set_boolean("swap-with-calendar", newVal)
-    },
     _onAppearanceChange: function(widget) {
         let [success, iter] = widget.get_active_iter();
         if (!success)
@@ -125,3 +111,66 @@ function buildPrefsWidget() {
 
     return widget;
 }
+
+const AppletPrefsWindow = new Lang.Class ({
+    Name: 'Hamster Applet Preferences',
+
+    _init: function () {
+        this.application = new Gtk.Application ();
+
+        this.application.connect('activate', Lang.bind(this, this._onActivate));
+        this.application.connect('startup', Lang.bind(this, this._onStartup));
+    },
+
+    _onActivate: function () {
+        this._window.present ();
+    },
+
+    _onStartup: function () {
+        this._buildUI ();
+    },
+
+    _buildUI: function () {
+
+        this._window = new Gtk.ApplicationWindow  ({
+            application: this.application,
+            title: "Hamster Applet Preferences",
+            default_height: 200,
+            default_width: 400,
+            window_position: Gtk.WindowPosition.CENTER });
+
+        this._widget = new HamsterSettingsWidget();
+        this._window.add (this._widget);
+        this._window.show_all();
+    },
+
+});
+
+function getCurrentFile() {
+    let stack = (new Error()).stack;
+
+    // Assuming we're importing this directly from an extension (and we shouldn't
+    // ever not be), its UUID should be directly in the path here.
+    let stackLine = stack.split('\n')[1];
+    if (!stackLine)
+        throw new Error('Could not find current file');
+
+    // The stack line is like:
+    //   init([object Object])@/home/user/data/gnome-shell/extensions/u@u.id/prefs.js:8
+    //
+    // In the case that we're importing from
+    // module scope, the first field is blank:
+    //   @/home/user/data/gnome-shell/extensions/u@u.id/prefs.js:8
+    let match = new RegExp('@(.+):\\d+').exec(stackLine);
+    if (!match)
+        throw new Error('Could not find current file');
+
+    let path = match[1];
+    let file = Gio.File.new_for_path(path);
+    return [file.get_path(), file.get_parent().get_path(), file.get_basename()];
+}
+
+// Run the application
+let app = new AppletPrefsWindow();
+app.application.run (ARGV);
+
