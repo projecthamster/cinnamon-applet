@@ -14,8 +14,8 @@
  *
  */
 
-// TODO - investigate usage of third party libs (d3/underscore/whatever)
-//        otherwise even most primitive operations are hardcore
+const AppletUUID = "hamster@projecthamster.wordpress.com";
+const HAMSTER_APPLET_SCHEMA = "org.cinnamon.hamster-applet";
 
 const Applet = imports.ui.applet;
 const Clutter = imports.gi.Clutter;
@@ -24,25 +24,17 @@ const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 const St = imports.gi.St;
-const Meta = imports.gi.Meta;
 const Main = imports.ui.main;
 const Gio = imports.gi.Gio;
 const PopupMenu = imports.ui.popupMenu;
-const PanelMenu = imports.ui.panelMenu;
-const Gettext = imports.gettext.domain('hamster-shell-extension');
+const Gettext = imports.gettext.domain('cinnamon-applets');
 const _ = Gettext.gettext;
-const N_ = function(x) { return x; }
 
-// Get current directory on imports search path
-// TODO - There must be an easier way to do this in Cinnamon...
-let file_info = getCurrentFile();
-const LIB_PATH = file_info[1];
-imports.searchPath.unshift(LIB_PATH);
-
+/* Local imports */
+const AppletDir = imports.ui.appletManager.appletMeta[AppletUUID].path;
+imports.searchPath.unshift(AppletDir);
 const Stuff = imports.stuff;
 const Convenience = imports.convenience;
-
-const HAMSTER_APPLET_SCHEMA = "org.cinnamon.hamster-applet";
 
 // TODO - why are we not using dbus introspection here or something?
 let ApiProxy = DBus.makeProxyClass({
@@ -491,28 +483,4 @@ function main(metadata, orientation, panel_height) {
     //TODO: Initialise translations in a cinnamon way ;-)
     //Convenience.initTranslations("hamster-cinnamon-applet");
     return new HamsterApplet(metadata, orientation, panel_height);
-}
-
-function getCurrentFile() {
-    let stack = (new Error()).stack;
-
-    // Assuming we're importing this directly from an extension (and we shouldn't
-    // ever not be), its UUID should be directly in the path here.
-    let stackLine = stack.split('\n')[1];
-    if (!stackLine)
-        throw new Error('Could not find current file');
-
-    // The stack line is like:
-    //   init([object Object])@/home/user/data/gnome-shell/extensions/u@u.id/prefs.js:8
-    //
-    // In the case that we're importing from
-    // module scope, the first field is blank:
-    //   @/home/user/data/gnome-shell/extensions/u@u.id/prefs.js:8
-    let match = new RegExp('@(.+):\\d+').exec(stackLine);
-    if (!match)
-        throw new Error('Could not find current file');
-
-    let path = match[1];
-    let file = Gio.File.new_for_path(path);
-    return [file.get_path(), file.get_parent().get_path(), file.get_basename()];
 }
