@@ -27,7 +27,7 @@ const St = imports.gi.St;
 const Main = imports.ui.main;
 const Gio = imports.gi.Gio;
 const PopupMenu = imports.ui.popupMenu;
-const Gettext = imports.gettext.domain('cinnamon-applets');
+const Gettext = imports.gettext;
 const _ = Gettext.gettext;
 
 /* Local imports */
@@ -480,7 +480,9 @@ HamsterApplet.prototype = {
 };
 
 function main(metadata, orientation, panel_height) {
-    //TODO: Initialise translations in a cinnamon way ;-)
-    //Convenience.initTranslations("hamster-cinnamon-applet");
+    /* Use local translations
+     * TODO: Update translations to make them specific to this applet */
+    Gettext.bindtextdomain("hamster-shell-extension", metadata.path + "/locale");
+    Gettext.textdomain("hamster-shell-extension");
     return new HamsterApplet(metadata, orientation, panel_height);
 }
