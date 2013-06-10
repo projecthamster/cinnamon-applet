@@ -90,7 +90,8 @@ HamsterBox.prototype = {
                                         can_focus: true,
                                         track_hover: false,
                                         hint_text: _("Enter activity..."),
-                                        style_class: 'popup-menu-item'});
+                                        style_class: 'popup-menu-item',
+                                        style: 'selected-color: black;'});
         this._textEntry.clutter_text.connect('activate', Lang.bind(this, this._onEntryActivated));
         this._textEntry.clutter_text.connect('key-release-event', Lang.bind(this, this._onKeyReleaseEvent));
 
