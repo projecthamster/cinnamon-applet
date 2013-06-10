@@ -291,10 +291,12 @@ HamsterApplet.prototype = {
 
     on_applet_clicked: function(event) {
         this.menu.toggle();
+        let text = this.activityEntry._textEntry.set_text('');
     },
 
     on_hotkey_triggered: function() {
         this.menu.toggle();
+        let text = this.activityEntry._textEntry.set_text('');
     },
 
     refreshActivities: function() {
