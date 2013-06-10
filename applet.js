@@ -79,17 +79,18 @@ HamsterBox.prototype = {
     _init: function(itemParams) {
         PopupMenu.PopupBaseMenuItem.prototype._init.call(this, {reactive: false});
 
-        let box = new St.BoxLayout({style_class: 'hamster-box'});
+        let box = new St.BoxLayout();
         box.set_vertical(true);
 
-        let label = new St.Label({style_class: 'hamster-box-label'});
+        let label = new St.Label({style_class: 'popup-menu-content popup-subtitle-menu-item'});
         label.set_text(_("What are you doing?"))
         box.add(label);
 
         this._textEntry = new St.Entry({name: 'searchEntry',
                                         can_focus: true,
                                         track_hover: false,
-                                        hint_text: _("Enter activity...")});
+                                        hint_text: _("Enter activity..."),
+                                        style_class: 'popup-menu-item'});
         this._textEntry.clutter_text.connect('activate', Lang.bind(this, this._onEntryActivated));
         this._textEntry.clutter_text.connect('key-release-event', Lang.bind(this, this._onKeyReleaseEvent));
 
@@ -99,11 +100,11 @@ HamsterBox.prototype = {
         // autocomplete popup - couldn't spark it up just yet
         //this._popup = new PopupMenu.PopupComboMenu(this._textEntry)
 
-        label = new St.Label({style_class: 'hamster-box-label'});
+        label = new St.Label({style_class: 'popup-menu-content popup-subtitle-menu-item'});
         label.set_text(_("Todays activities"))
         box.add(label);
 
-        let scrollbox = new St.ScrollView({style_class: 'hamster-scrollbox'});
+        let scrollbox = new St.ScrollView();
         box.add(scrollbox);
 
         // Since St.Table does not implement StScrollable, we create a
@@ -112,10 +113,10 @@ HamsterBox.prototype = {
         container.set_vertical(true);
         scrollbox.add_actor(container);
 
-        this.activities = new St.Table({style_class: 'hamster-activities'})
+        this.activities = new St.Table()
         container.add(this.activities)
 
-        this.summaryLabel = new St.Label({style_class: 'summary-label'});
+        this.summaryLabel = new St.Label({style_class: 'popup-menu-content popup-subtitle-menu-item'});
         box.add(this.summaryLabel);
 
 
@@ -238,6 +239,7 @@ HamsterApplet.prototype = {
         this.menu.addMenuItem(item);
 
         // overview
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
         item = new PopupMenu.PopupMenuItem(_("Show Overview"));
         item.connect('activate', Lang.bind(this, this._onShowHamsterActivate));
         this.menu.addMenuItem(item);
@@ -319,7 +321,7 @@ HamsterApplet.prototype = {
             for each (var fact in facts) {
                 let label;
 
-                label = new St.Label({style_class: 'cell-label'});
+                label = new St.Label({style_class: 'popup-menu-item'});
                 let text = "%02d:%02d - ".format(fact.startTime.getHours(), fact.startTime.getMinutes());
                 if (fact.endTime) {
                     text += "%02d:%02d".format(fact.endTime.getHours(), fact.endTime.getMinutes());
@@ -327,11 +329,11 @@ HamsterApplet.prototype = {
                 label.set_text(text)
                 activities.add(label, {row: i, col: 0, x_expand: false});
 
-                label = new St.Label({style_class: 'cell-label'});
+                label = new St.Label({style_class: 'popup-menu-item'});
                 label.set_text(fact.name + (0 < fact.tags.length ? (" #" + fact.tags.join(", #")) : ""));
                 activities.add(label, {row: i, col: 1});
 
-                label = new St.Label({style_class: 'cell-label'});
+                label = new St.Label({style_class: 'popup-menu-item'});
                 label.set_text(Stuff.formatDurationHuman(fact.delta))
                 activities.add(label, {row: i, col: 2, x_expand: false});
 
@@ -339,10 +341,10 @@ HamsterApplet.prototype = {
                 let icon;
                 let button;
 
-                button = new St.Button({style_class: 'clickable cell-button'});
+                button = new St.Button();
 
                 icon = new St.Icon({icon_name: "document-open-symbolic",
-                                    icon_size: 16});
+                                    style_class: 'popup-menu-icon'});
 
                 button.set_child(icon);
                 button.fact = fact;
@@ -359,10 +361,10 @@ HamsterApplet.prototype = {
                     this.currentActivity.name != fact.name ||
                     this.currentActivity.category != fact.category ||
                     this.currentActivity.tags.join(",") != fact.tags.join(",")) {
-                    button = new St.Button({style_class: 'clickable cell-button'});
+                    button = new St.Button();
 
                     icon = new St.Icon({icon_name: "media-playback-start-symbolic",
-                                        icon_size: 16});
+                                    style_class: 'popup-menu-icon'});
 
                     button.set_child(icon);
                     button.fact = fact;
