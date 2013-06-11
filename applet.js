@@ -215,6 +215,7 @@ HamsterApplet.prototype = {
 
         this._settings = Convenience.getAppletSettings(HAMSTER_APPLET_SCHEMA,
                 metadata.path + "/schemas/");
+        this.path = metadata.path;
 
         // Set initial label, icon, activity
         this._label = _("Loading...");
@@ -259,6 +260,11 @@ HamsterApplet.prototype = {
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
         item = new PopupMenu.PopupMenuItem(_("Tracking Settings"));
         item.connect('activate', Lang.bind(this, this._onShowSettingsActivate));
+        this.menu.addMenuItem(item);
+
+        // applet settings
+        item = new PopupMenu.PopupMenuItem(_("Applet Settings"));
+        item.connect('activate', Lang.bind(this, this._onAppletSettingsActivate));
         this.menu.addMenuItem(item);
 
         // Focus HamsterBox when menu is opened
@@ -475,6 +481,9 @@ HamsterApplet.prototype = {
         }));
     },
 
+    _onAppletSettingsActivate: function() {
+        GLib.spawn_command_line_async(this.path + '/prefs.js');
+    },
 
     _onActivityEntry: function() {
         let text = this.activityEntry._textEntry.get_text();
