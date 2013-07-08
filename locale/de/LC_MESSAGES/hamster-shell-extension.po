@@ -1,0 +1,54 @@
+#
+# Martin Brylski <martin.brylski@gmail.com>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hamster-shell-extension\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-08-17 16:42+0100\n"
+"PO-Revision-Date: 2013-07-08 16:18+0100\n"
+"Last-Translator: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: extension.js:85
+msgid "What are you doing?"
+msgstr "Was machst du gerade?"
+
+#: extension.js:91
+msgid "Enter activity..."
+msgstr "Tätigkeit eingeben..."
+
+#: extension.js:105
+msgid "Todays activities"
+msgstr "Heutige Tätigkeiten"
+
+#: extension.js:215
+msgid "Loading..."
+msgstr "Lade..."
+
+#: extension.js:238
+msgid "Show Overview"
+msgstr "Zeige Übersicht"
+
+#: extension.js:243
+msgid "Stop Tracking"
+msgstr "Aufzeichnung anhalten"
+
+#: extension.js:249
+msgid "Tracking Settings"
+msgstr "Einstellungen"
+
+#: extension.js:398
+msgid "No Activity"
+msgstr "Keine Aktivität"
+
+#: extension.js:254
+msgid "Add Earlier Activity"
+msgstr "Frühere Tätigkeit hinzufügen"
