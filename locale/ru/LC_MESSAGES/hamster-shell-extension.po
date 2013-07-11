@@ -56,5 +56,3 @@ msgstr "Настройки апплета"
 #: applet.js:434
 msgid "No Activity"
 msgstr "Нет занятия"
-
-

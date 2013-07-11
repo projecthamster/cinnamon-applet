@@ -16,38 +16,38 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Generator: Gtranslator 2.91.5\n"
 
-#: extension.js:85
+#: applet.js:86
 msgid "What are you doing?"
 msgstr "Que faîtes vous ?"
 
-#: extension.js:91
+#: applet.js:92
 msgid "Enter activity..."
 msgstr "Entrez l'activité…"
 
-#: extension.js:105
+#: applet.js:105
 msgid "Todays activities"
 msgstr "Activités du jour"
 
-#: extension.js:215
+#: applet.js:221
 msgid "Loading..."
 msgstr "Chargement…"
 
-#: extension.js:238
+#: applet.js:245
 msgid "Show Overview"
 msgstr "Montrer le résumé"
 
-#: extension.js:243
+#: applet.js:250
 msgid "Stop Tracking"
 msgstr "Arrêter le suivi"
 
-#: extension.js:249
+#: applet.js:255
+msgid "Add Earlier Activity"
+msgstr "Ajouter une activité antérieure"
+
+#: applet.js:261
 msgid "Tracking Settings"
 msgstr "Préférences"
 
-#: extension.js:398
-msgid "No activity"
+#: applet.js:434
+msgid "No Activity"
 msgstr "Pas d'activité"
-
-#: extension.js:254
-msgid "Add Earlier Activity"
-msgstr "Ajouter une activité antérieure"
