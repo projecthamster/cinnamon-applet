@@ -17,38 +17,38 @@ msgstr ""
 "X-Generator: Poedit 1.5.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: extension.js:85
+#: applet.js:86
 msgid "What are you doing?"
 msgstr "Was machst du gerade?"
 
-#: extension.js:91
+#: applet.js:92
 msgid "Enter activity..."
 msgstr "Tätigkeit eingeben..."
 
-#: extension.js:105
+#: applet.js:105
 msgid "Todays activities"
 msgstr "Heutige Tätigkeiten"
 
-#: extension.js:215
+#: applet.js:221
 msgid "Loading..."
 msgstr "Lade..."
 
-#: extension.js:238
+#: applet.js:245
 msgid "Show Overview"
 msgstr "Zeige Übersicht"
 
-#: extension.js:243
+#: applet.js:250
 msgid "Stop Tracking"
 msgstr "Aufzeichnung anhalten"
 
-#: extension.js:249
+#: applet.js:255
+msgid "Add Earlier Activity"
+msgstr "Frühere Tätigkeit hinzufügen"
+
+#: applet.js:261
 msgid "Tracking Settings"
 msgstr "Einstellungen"
 
-#: extension.js:398
+#: applet.js:434
 msgid "No Activity"
 msgstr "Keine Aktivität"
-
-#: extension.js:254
-msgid "Add Earlier Activity"
-msgstr "Frühere Tätigkeit hinzufügen"
