@@ -54,6 +54,9 @@ const ApiProxyIface = '<node> \
   <arg direction="in"  type="s" name="search" /> \
   <arg direction="out" type="a(ss)" /> \
 </method> \
+<method name="GetCategories"> \
+  <arg direction="out" type="a(is)" /> \
+</method> \
 <signal name="FactsChanged"></signal> \
 <signal name="ActivitiesChanged"></signal> \
 <signal name="TagsChanged"></signal> \
@@ -165,6 +168,19 @@ HamsterBox.prototype = {
         return this.autocompleteActivities;
     },
 
+    _getCategories: function() {
+        if (this.runningCategoriesQuery)
+            return this.autocompleteCategories;
+
+        this.runningCategoriesQuery = true;
+        this.proxy.GetCategoriesRemote(Lang.bind(this, function([response], err) {
+            this.runningCategoriesQuery = false;
+            this.autocompleteCategories = response;
+        }));
+
+        return this.autocompleteCategories;
+    },
+
     _onKeyReleaseEvent: function(textItem, evt) {
         let symbol = evt.get_key_symbol();
         let text = this._textEntry.get_text().toLowerCase();
@@ -195,7 +211,29 @@ HamsterBox.prototype = {
                 return;
         }
 
+        // category completion
+        let atIndex = text.indexOf("@");
+        if (atIndex != -1) {
+            activitytext = this._textEntry.get_text().substring(0, atIndex);
+            let categorytext = text.substring(atIndex+1);
+            let allCategories = this._getCategories();
+            for each (var cat in allCategories) {
+                let completion = cat[1];
+                if (completion.toLowerCase().substring(0, categorytext.length) == categorytext) {
+                    this.prevText = text;
+                    completion = starttime + activitytext + "@" + completion;
 
+                    this._textEntry.set_text(completion);
+                    this._textEntry.clutter_text.set_selection(text.length, completion.length);
+
+                    this._prevText = completion.toLowerCase();
+
+                    return;
+                }
+            }
+        }
+
+        // activity completion
         let allActivities = this._getActivities();
         for each (var rec in allActivities) {
             let completion = rec[0];
