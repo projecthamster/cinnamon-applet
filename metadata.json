@@ -10,6 +10,6 @@
     ],
     "url": "https://github.com/projecthamster/cinnamon-applet",
     "uuid": "hamster@projecthamster.wordpress.com",
-    "version": 0.1,
+    "version": 0.2,
     "external-configuration-app": "prefs.js"
 }
