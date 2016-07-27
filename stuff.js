@@ -1,3 +1,10 @@
+/*
+ * Portions originate from the gnome-shell source code, Copyright (c)
+ * its respectives authors.
+ * This project is released under the GNU GPL License.
+ * See COPYING for details.
+*/
+
 function formatDuration(minutes) {
     return "%02d:%02d".format((minutes - minutes % 60) / 60, minutes % 60);
 }
