@@ -4,7 +4,9 @@
  *
  * This project is released under the GNU GPL License.
  * See COPYING for details.
- */
+ * Portions originate from the gnome-shell source code, Copyright (c)
+ * its respectives authors.
+*/
 
 const Gio = imports.gi.Gio;
 
