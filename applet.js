@@ -105,7 +105,10 @@ HamsterBox.prototype = {
                                         style_class: 'popup-menu-item',
                                         style: 'selected-color: black;'});
         this._textEntry.clutter_text.connect('activate', Lang.bind(this, this._onEntryActivated));
+        //cursorPos = this._textEntry.clutter_text.cursor_position(this)
         this._textEntry.clutter_text.connect('key-release-event', Lang.bind(this, this._onKeyReleaseEvent));
+        //get_int
+        //clutter_text_get_cursor_position (ClutterText *self);
 
 
         box.add(this._textEntry);
@@ -186,7 +189,6 @@ HamsterBox.prototype = {
         let text = this._textEntry.get_text().toLowerCase();
         let starttime = "";
         let activitytext = text;
-
         // Don't include leading times in the activity autocomplete
         let match = [];
         if ((match = text.match(/^\d\d:\d\d /)) ||
@@ -209,6 +211,11 @@ HamsterBox.prototype = {
         for each (var key in ignoreKeys) {
             if (symbol == key)
                 return;
+        }
+
+        // prevent auto-complete if the cursor is not at the end of the text
+        if(this._textEntry.clutter_text.get_cursor_position() != -1  ){
+            return;
         }
 
         // category completion
@@ -245,9 +252,7 @@ HamsterBox.prototype = {
 
                 this._textEntry.set_text(completion);
                 this._textEntry.clutter_text.set_selection(text.length, completion.length);
-
                 this._prevText = completion.toLowerCase();
-
                 return;
             }
         }
@@ -398,24 +403,26 @@ HamsterApplet.prototype = {
         activities.destroy_all_children(); // remove previous entries
 
         var i = 0;
-        for each (var fact in facts) {
+        for each (var fact in facts.reverse()) {
             let label;
 
             label = new St.Label({style_class: 'popup-menu-item'});
             let text = "%02d:%02d - ".format(fact.startTime.getHours(), fact.startTime.getMinutes());
             if (fact.endTime) {
                 text += "%02d:%02d".format(fact.endTime.getHours(), fact.endTime.getMinutes());
+            }else{
+                text += '   ....'
             }
             label.set_text(text)
-            activities.add(label, {row: i, col: 0, x_expand: false});
+            activities.add(label, {row: i, col: 1, x_expand: false});
 
             label = new St.Label({style_class: 'popup-menu-item'});
             label.set_text(fact.name + (0 < fact.tags.length ? (" #" + fact.tags.join(", #")) : ""));
-            activities.add(label, {row: i, col: 1});
+            activities.add(label, {row: i, col: 2});
 
             label = new St.Label({style_class: 'popup-menu-item'});
             label.set_text(Stuff.formatDurationHuman(fact.delta));
-            activities.add(label, {row: i, col: 2, x_expand: false});
+            activities.add(label, {row: i, col: 3, x_expand: false});
 
 
             let icon;
@@ -423,7 +430,8 @@ HamsterApplet.prototype = {
 
             button = new St.Button();
 
-            icon = new St.Icon({icon_name: "document-open-symbolic",
+            //icon = new St.Icon({icon_name: "accessories-text-editor-symbolic",
+            icon = new St.Icon({icon_name: "emblem-system-symbolic",
                                 style_class: 'popup-menu-icon'});
 
             button.set_child(icon);
@@ -432,7 +440,7 @@ HamsterApplet.prototype = {
                 this._windowsProxy.editSync(GLib.Variant.new('i', [button.fact.id]));
                 this.menu.close();
             }));
-            activities.add(button, {row: i, col: 3});
+            activities.add(button, {row: i, col: 4});
 
 
             if (!this.currentActivity ||
@@ -461,7 +469,16 @@ HamsterApplet.prototype = {
                     this.menu.close();
                 }));
 
-                activities.add(button, {row: i, col: 4});
+                activities.add(button, {row: i, col: 0});
+            }else{
+                button = new St.Button();
+                icon = new St.Icon({icon_name: "media-playback-stop-symbolic",
+                    style_class: 'popup-menu-icon'});
+
+                button.set_child(icon);
+                button.connect('clicked',  Lang.bind(this, this._onStopTracking));
+                button.fact = fact;
+                activities.add(button, {row: i, col: 0});
             }
 
             i += 1;
