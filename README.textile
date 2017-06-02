@@ -1,3 +1,15 @@
+*ATTENTION: THIS REPOSITORY IS DEPRECATED*
+
+As this "Issue":https://github.com/projecthamster/cinnamon-applet/issues/30 documents the cinnamon applet is now maintained by the Mint Linux team.
+As such this repository is keept around for historical and migration reasons.
+Contributers are encouraged to head over there and no work will be done on this
+repository at all.
+Thanks for your support.
+
+
+-------------------------------------------------------
+
+
 Work in progress Cinnamon applet for hamster.
 
 h1. Installing
